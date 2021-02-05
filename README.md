@@ -6,7 +6,8 @@ Git hooks are run to ensure the code quality of the codes being committed and pu
 ## Installation
 
 ```bash
-cp -a hooks/. <YOUR-REPO-FOLDER>.git/hooks
+cp -a hooks/. <YOUR-REPO-FOLDER>/.git/hooks
+chmod +x <YOUR-REPO-FOLDER>/.git/hooks/*
 ```
 
 ## Skip Hooks
