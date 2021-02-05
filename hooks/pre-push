@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# git hook to run checks on go code: go vet, go test
+
+if [[ $SKIP_HOOKS = 1 ]]; then
+  exit 0
+fi
+
+PASS=true
+
+# go vet
+go vet ./...
+if [[ $? != 0 ]]; then
+  printf "\t\033[31mgo vet $FILE_PKG\033[0m \033[0;30m\033[41mFAILURE!\033[0m\n"
+  PASS=false
+else
+  printf "\t\033[32mgo vet $FILE_PKG\033[0m \033[0;30m\033[42mPASS\033[0m\n"
+fi
+
+# go test
+go test -short -coverprofile=cover.out `go list ./... | grep -vE '(vendor|mock)'`
+if [[ $? != 0 ]]; then
+  printf "\t\033[31mgo test $FILE_PKG\033[0m \033[0;30m\033[41mFAILURE!\033[0m\n"
+  PASS=false
+else
+  printf "\t\033[32mgo test $FILE_PKG\033[0m \033[0;30m\033[42mPASS\033[0m\n"
+fi
+
+if ! $PASS; then
+  printf "\033[0;30m\033[41mPUSH FAILED\033[0m\n"
+  exit 1
+else
+  printf "\033[0;30m\033[42mPUSH SUCCEEDED\033[0m\n"
+fi
+
+exit 0

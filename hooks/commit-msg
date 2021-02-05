@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# git hook to check if the commit message follows the agreed convention
+# https://tokopedia.slack.com/archives/GLLBZ8TTQ/p1579509038001600?thread_ts=1579509038.001600
+# modified from: https://dev.to/craicoverflow/enforcing-conventional-commits-using-git-hooks-1o5p
+
+min_length=1
+max_length=52
+types="FEATURES|TD|HOTFIX|BUG"
+regexp="^\[($types)\](\[.+\])?:\s.{$min_length,$max_length}$"
+
+msg=$(head -1 $1)
+
+if [[ ! $msg =~ $regexp ]]; then
+  echo -e "\n\e[1m\e[31m[INVALID COMMIT MESSAGE]"
+  echo -e "------------------------\033[0m\e[0m"
+  echo -e "\e[1mCommit format: [<TYPE>][<TICKET?>]: <COMMIT MESSAGE>"
+  echo -e "\e[1mValid types:\e[0m \e[34m$types\033[0m"
+  echo -e "\e[1mMax length (first line):\e[0m \e[34m$max_length\033[0m"
+  echo -e "\e[1mMin length (first line):\e[0m \e[34m$min_length\033[0m"
+  echo -e "\e[1mExamples:\e[0m"
+  echo -e " \e[34m[FEATURES][EIBP-1234] : authorization code grant type\033[0m"
+  echo -e " \e[34m[TD] : updated packages\033[0m"
+
+  # exit with an error
+  exit 1
+fi
