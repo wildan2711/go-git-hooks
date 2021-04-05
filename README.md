@@ -14,7 +14,7 @@ chmod +x <YOUR-REPO-FOLDER>/.git/hooks/*
 
 ## Skip Hooks
 
-In some cases, you would want to skip running the hooks (e.g: config change, other file changes, etc.). Use the below environment variable:
+In some cases, you would want to skip running the hooks (e.g: urgent hotfixes, minor config change, etc.). Use the below environment variable when running git commit or push:
 
 ```
 SKIP_HOOKS=1
