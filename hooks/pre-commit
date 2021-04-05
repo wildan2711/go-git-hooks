@@ -1,22 +1,19 @@
 #!/bin/bash
 
 # git hook to run checks on changed go code, using: goimports, golint, gosec
+# will also check for credentials using gitleaks
 # modified from: https://gist.github.com/radlinskii/0ba6ec694b1e590d8457c98a358f335f
 
 if [[ $SKIP_HOOKS = 1 ]]; then
   exit 0
 fi
 
-REPO_GOPATH=github.com/tokopedia/enterpriseapp-dba-backend
 STAGED_GO_FILES=$(git diff --cached --name-only | grep ".go$")
-
-if [[ "$STAGED_GO_FILES" = "" ]]; then
-  exit 0
-fi
 
 GOLINT=$GOPATH/bin/golint
 GOIMPORTS=$GOPATH/bin/goimports
 GOSEC=$GOPATH/bin/gosec
+GITLEAKS=$GOPATH/bin/gitleaks
 
 # Check for golint
 if [[ ! -x "$GOLINT" ]]; then
@@ -33,6 +30,12 @@ fi
 # Check for gosec
 if [[ ! -x "$GOSEC" ]]; then
   printf "\t\033[41mPlease install gosec\033[0m (go get github.com/securego/gosec/v2/cmd/gosec)"
+  exit 1
+fi
+
+# Check for gitleaks
+if [[ ! -x "$GITLEAKS" ]]; then
+  printf "\t\033[41mPlease install gitleaks\033[0m (GO111MODULE=on go get github.com/zricethezav/gitleaks/v7)"
   exit 1
 fi
 
@@ -58,6 +61,14 @@ do
     printf "\t\033[32mgosec $(dirname $FILE)\033[0m \033[0;30m\033[42mPASS\033[0m\n"
   fi
 done
+
+gitleaks -v --unstaged
+if [[ $? != 0 ]]; then
+  printf "\t\033[31mgitleaks -v --unstaged\033[0m \033[0;30m\033[41mFAILURE!\033[0m\n"
+  PASS=false
+else
+  printf "\t\033[32mgitleaks -v --unstaged\033[0m \033[0;30m\033[42mPASS\033[0m\n"
+fi
 
 if ! $PASS; then
   printf "\033[0;30m\033[41mCOMMIT FAILED\033[0m\n"
