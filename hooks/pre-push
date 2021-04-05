@@ -14,7 +14,7 @@ if [[ $? != 0 ]]; then
   printf "\t\033[31mgo vet ./...\033[0m \033[0;30m\033[41mFAILURE!\033[0m\n"
   PASS=false
 else
-  printf "\t\033[32mgo vet $FILE_PKG\033[0m \033[0;30m\033[42mPASS\033[0m\n"
+  printf "\t\033[32mgo vet ./...\033[0m \033[0;30m\033[42mPASS\033[0m\n"
 fi
 
 # go test
