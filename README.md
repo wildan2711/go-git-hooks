@@ -1,12 +1,14 @@
 Git hooks are run to ensure the code quality of the codes being committed and pushed.
 
-- On commit it will run: `goimports`, `golint`, `gosec`
-- On Push it will run: `go vet`, `go test`
+- On commit it will run on staged files: `goimports`, `golint`, `gosec`, `gitleaks`
+- On Push it will run on all files: `go vet`, `go test`
 
 ## Installation
 
 ```bash
-cp -a hooks/. <YOUR-REPO-FOLDER>/.git/hooks
+git clone https://github.com/wildan2711/go-git-hooks.git
+
+cp -a go-git-hooks/hooks/. <YOUR-REPO-FOLDER>/.git/hooks
 chmod +x <YOUR-REPO-FOLDER>/.git/hooks/*
 ```
 
